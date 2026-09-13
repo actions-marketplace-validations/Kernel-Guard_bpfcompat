@@ -7,6 +7,35 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) once a
 
 ## [Unreleased]
 
+### Added
+- Consumer canary now covers the **stable** release as well as the candidate.
+  `stable-prebuilt` pins the exact commit of the release `release.yaml` calls
+  stable and installs no build toolchain, so a regression in
+  commit-SHA-to-release resolution fails here instead of forcing a downstream
+  consumer into an unexpected source build. Both prebuilt jobs first assert
+  that the runner has no libbpf headers, which is what makes "the job passed"
+  mean "prebuilt binaries were used" rather than "something compiled".
+  `candidate-prebuilt` (formerly `prebuilt`) keeps the prerelease path and its
+  attestation verification unchanged; `source-build` keeps the documented
+  dependency set honest.
+- `scripts/check-canary-pins.sh` binds those pins to `release.yaml` and runs
+  inside the release-consistency gate. Bumping `stable_version` without
+  repinning the canary — or mislabelling a pin's `# vX.Y.Z` comment — now fails
+  CI instead of silently leaving the documented consumer path untested.
+
+### Fixed
+- Release-asset verification regression coverage now exercises the cases the
+  contract actually depends on: extra `SHA256SUMS` entries for assets that were
+  never downloaded must pass (the v0.3.6 arm64 failure), while a missing,
+  duplicated, or malformed entry, a missing asset or manifest, a traversing
+  asset name, a failed attestation, and a runner with no usable `gh` must all
+  fail closed.
+- The canary pin guard's remote tag lookup, used on the shallow checkouts some
+  gate lanes run, now resolves lightweight tags as well as annotated ones. Only
+  an annotated tag advertises a peeled `refs/tags/<t>^{}` ref, so asking for
+  that ref alone would have reported the next lightweight release tag as
+  nonexistent and failed the release gate for a tag that exists.
+
 ## [0.4.0-rc.3] - 2026-07-30
 
 ### Changed
@@ -73,6 +102,28 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) once a
   owner-only directories and files.
 - `BPFCOMPAT_VALIDATOR_SHA256` is now enforced before a guest validator is
   used.
+
+## [0.3.7] - 2026-08-26
+
+### Fixed
+- **GitHub Action: prebuilt-binary verification no longer fails on assets it
+  never downloads.** v0.3.6 began publishing `bpfcompat-linux-arm64`, so the
+  release `SHA256SUMS` listed three artifacts while the action fetches only the
+  two amd64 ones. The bare `sha256sum -c SHA256SUMS` then reported
+  `bpfcompat-linux-arm64: FAILED open or read` and, because verification is a
+  hard error rather than a fallback, aborted the action on **every amd64
+  runner** — the "Run bpfcompat" step never executed. Any workflow pinned to
+  the v0.3.6 commit was affected; consumers that pinned a tag object SHA
+  instead silently fell back to building from source and so did not see it.
+  Verification now covers exactly the downloaded assets and stays fail-closed:
+  a missing, duplicated, or malformed `SHA256SUMS` entry is still an error.
+  Covered by `scripts/action-prebuilt-checksums_test.sh`, which extracts the
+  logic from `action.yml` and exercises the corrupt/missing/duplicate cases.
+
+### Security
+- Moved the CI and release toolchain from Go 1.25.12 to 1.25.14, which
+  govulncheck now flags on the older patch release. Release binaries for this
+  tag are built with 1.25.14.
 
 ## [0.3.6] - 2026-07-26
 

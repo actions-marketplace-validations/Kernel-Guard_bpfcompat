@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest          # exposes /dev/kvm for KVM acceleration
     steps:
       - uses: actions/checkout@v4
-      - uses: Kernel-Guard/bpfcompat@v0.3.6
+      - uses: Kernel-Guard/bpfcompat@v0.3.7
         with:
           artifact: build/program.bpf.o     # your compiled object
           matrix: matrices/mvp.yaml          # the kernels you support
@@ -57,7 +57,7 @@ What you get:
 Shipping a whole product? Use **suite mode** to gate a collection in one run:
 
 ```yaml
-      - uses: Kernel-Guard/bpfcompat@v0.3.6
+      - uses: Kernel-Guard/bpfcompat@v0.3.7
         with:
           suite: suites/project.yaml
           suite-out: reports/suite.json
@@ -107,6 +107,8 @@ tooling.
 
 ## Next
 
+- [compatibility-contract.md](compatibility-contract.md) — what a bpfcompat result means: artifact, loader, environment, verdict, and CI exit semantics
+- [release-regression-diff.md](release-regression-diff.md) — `bpfcompat diff`: compare a candidate release against a baseline and gate on *new* regressions only
 - [evidence-schema.md](evidence-schema.md) — the report format + classification taxonomy
 - [verifying-releases.md](verifying-releases.md) — verify signed, attested binaries
 - [case-study-falco-modern-bpf.md](case-study-falco-modern-bpf.md) — a real reference matrix
