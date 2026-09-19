@@ -8,6 +8,32 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) once a
 ## [Unreleased]
 
 ### Added
+- Published the canonical research pilot v1 repository dataset from successful
+  workflow run `35393833464`: 70/70 normalized execution records, exact
+  environment and execution provenance, raw-report and processed-data SHA-256
+  locks, lossless per-case execution shards, and deterministic descriptive
+  RQ1–RQ4 tables guarded by a reproduction test. The full Actions artifact is
+  content-addressed in the dataset manifest for later durable archival.
+- Added the manual-only research pilot v1 execution protocol: seven frozen
+  validation cases across ten logical kernel profiles, immutable profile and
+  manifest locks, exact-environment derivation from observed kernel plus image
+  evidence, raw-report provenance, and normalization into JSONL research
+  execution records without converting infrastructure failures into eBPF
+  incompatibilities.
+- Added a research pilot v1 materialization pipeline that rebuilds the frozen
+  BPF objects and project loaders from pinned source revisions, verifies the
+  published BPFCompat v0.3.7 execution binaries, records the build toolchain,
+  derives canonical validation-contract hashes, and uploads an integrity-checked
+  SHA-256 bundle without running the compatibility study itself.
+- Froze the prospective research pilot v1 selection: explicit inclusion rules,
+  pinned Falco and Cilium source provenance, a ten-profile logical kernel set,
+  libbpf/cilium-ebpf/Falco validation-contract specifications, and documented
+  Inspektor Gadget deferrals where existing evidence is not yet content-addressed.
+- Added CFF citation metadata and a research protocol scaffold defining the
+  prospective eBPF compatibility study questions, evidence rules, corpus
+  metadata, reproducibility boundary, and academic-readiness roadmap. Existing
+  case studies remain exploratory evidence rather than being relabeled as
+  preregistered research.
 - Consumer canary now covers the **stable** release as well as the candidate.
   `stable-prebuilt` pins the exact commit of the release `release.yaml` calls
   stable and installs no build toolchain, so a regression in
@@ -24,6 +50,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) once a
   CI instead of silently leaving the documented consumer path untested.
 
 ### Fixed
+- Fixed research pilot v1 normalization to match the actually frozen
+  BPFCompat v0.3.7 `ReportV01` schema. The runner now records execution-time
+  CLI/validator/loader hashes before the study; normalization derives the
+  v0.3.7 verdict and kernel-family match from report fields, validates any
+  newer structured fields when present, preserves exact observed environments
+  for requested-kernel mismatches, and fails closed on provenance drift.
 - Release-asset verification regression coverage now exercises the cases the
   contract actually depends on: extra `SHA256SUMS` entries for assets that were
   never downloaded must pass (the v0.3.6 arm64 failure), while a missing,
