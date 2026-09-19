@@ -30,7 +30,7 @@
 
 - [x] Implement a versioned study runner and normalizer for captured BPFCompat reports.
 - [x] Generate pilot v1 descriptive RQ1–RQ4 tables from normalized data.
-- [ ] Generate every final paper table and figure from normalized data.
+- [x] Generate every final paper table and figure deterministically from committed normalized data; bind generator inputs/outputs in `research/paper/generated/asset-manifest.json` and enforce byte-for-byte regeneration in CI.
 - [x] Define a bounded representative repeat-run protocol (PR #152).
 - [x] Execute the 21-attempt repeat-run workflow from `main`, bind its
       provenance/results to the repository snapshot, and evaluate environment
@@ -45,7 +45,7 @@
 ## Phase 4 — Archival
 
 - [x] Define the pilot v1 archival/DOI policy and third-party binary boundary.
-- [ ] Generate and verify the final machine-readable archival manifest.
+- [x] Generate and verify the final machine-readable archival manifest from the pinned pilot, repeat, and materialization artifacts; bind it with a compact repository lock and fail-closed redistribution checks.
 - [ ] Create a research-tagged release after repeat stability and final figures
       are frozen.
 - [ ] Archive the release/dataset in a DOI-granting repository such as Zenodo.
